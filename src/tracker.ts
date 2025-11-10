@@ -70,11 +70,13 @@ export async function loadAllTrackers(fileName: string): Promise<{ section: Mark
 type GetFile = () => string;
 
 export function displayTracker(tracker: Tracker, element: HTMLElement, getFile: GetFile, getSectionInfo: () => MarkdownSectionInformation, settings: SimpleTimeTrackerSettings, component: MarkdownRenderChild): void {
-
     element.addClass("simple-time-tracker-container");
+    // container para o timer e botões
+    let trackerHead = element.createDiv({ cls: "simple-time-tracker-head" });
+
     // add start/stop controls
     let running = isRunning(tracker);
-    let btn = new ButtonComponent(element)
+    let btn = new ButtonComponent(trackerHead)
         .setClass("clickable-icon")
         .setIcon(`lucide-${running ? "stop" : "play"}-circle`)
         .setTooltip(running ? "End" : "Start")
@@ -87,13 +89,13 @@ export function displayTracker(tracker: Tracker, element: HTMLElement, getFile: 
             await saveTracker(tracker, getFile(), getSectionInfo());
         });
     btn.buttonEl.addClass("simple-time-tracker-btn");
-    let newSegmentNameBox = new TextComponent(element)
+    let newSegmentNameBox = new TextComponent(trackerHead)
         .setPlaceholder("Segment name")
         .setDisabled(running);
     newSegmentNameBox.inputEl.addClass("simple-time-tracker-txt");
 
     // add timers
-    let timer = element.createDiv({ cls: "simple-time-tracker-timers" });
+    let timer = trackerHead.createDiv({ cls: "simple-time-tracker-timers" });
     let currentDiv = timer.createEl("div", { cls: "simple-time-tracker-timer" });
     let current = currentDiv.createEl("span", { cls: "simple-time-tracker-timer-time" });
     currentDiv.createEl("span", { text: "Current" });
